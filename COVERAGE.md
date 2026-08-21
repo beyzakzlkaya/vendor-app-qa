@@ -22,7 +22,7 @@ Durumlar: ✅ otomatik · 🔜 sırada (salt-okunur) · ✋ veri değiştiren (o
 | TC-REFURB-001 | Yeniletme siparişleri görünümü | 🔜 | "Yeniletip Gönder" akışı keşfedilecek |
 | TC-BB-024 | Alım listesi başlangıç durumu | 🔜 | Mağaza modu ekran keşfi |
 | TC-ORDER-008 | İade talebi oluşturma | ✋ | veri oluşturur — onayla |
-| TC-INV-002 | Fiyat güncelleme | ✋ | veri değiştirir — onayla |
+| TC-INV-002 | Fiyat güncelleme | 🐞 | mut-inv-002-fiyat-guncelleme.yaml — **BUG-2026-001**: 0 ₺ doğrulamasız kabul ediliyor (ER-5 ihlali); hata düzelene dek süit dışı, "Fiyat Değiştirme Hakkı" kotası nedeniyle manuel koşulur |
 | TC-INV-003 | Toplu fiyat güncelleme | ✋ | veri değiştirir — onayla |
 | TC-INV-005 | Bidbook teklif verme | ✋ | veri oluşturur — onayla |
 | TC-INV-007 | Flash ürüne katılım | ✋ | veri oluşturur — onayla |

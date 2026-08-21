@@ -1,0 +1,48 @@
+# TC-INV-002 — Fiyat güncelleme + geçersiz değer reddi (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/inventory/TC-INV-002-vendor-update-price.md
+#
+# ⚠️ VERİ DEĞİŞTİREN TEST — varsayılan süite DAHİL DEĞİL (mut- öneki, tc-* deseni dışında).
+# ⚠️ Her koşum "Fiyat Değiştirme Hakkı" kotasından tüketir (keşif anında kalan: 3).
+# ⚠️ BİLİNEN HATA (21 Ağu 2026, v3.6.0): ER-5 İHLALİ — uygulama 0 ₺ fiyatı doğrulamasız
+#    kabul ediyor, ürün 0 ₺ ile BUYBOX KAZANAN oluyor. Bu test, hata düzelene kadar
+#    KIRMIZI kalacak şekilde case'in beklentisini (doğrulama hatası) assert eder.
+#    Hata düzeltilince süite alınabilir. Manuel koşum: ./qa-run.sh .maestro/mut-inv-002-fiyat-guncelleme.yaml
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+# Cihazlarım listesine git
+- tapOn: 'Cihazlar'
+- extendedWaitUntil:
+    visible: '.*Cihazlarım.*'
+    timeout: 15000
+- tapOn:
+    text: '.*, Cihazlarım, .*'
+- extendedWaitUntil:
+    visible: '.*Filtrele'
+    timeout: 15000
+- takeScreenshot: 04-cihazlarim-once
+
+# Fiyat düzenleme sayfasını aç (kalem ikonu — Satış Fiyatı değerinin yanında)
+- tapOn:
+    text: '.*Satış Fiyatı.*'
+    optional: true
+- tapOn:
+    point: 29%,62%
+- extendedWaitUntil:
+    visible: 'Eski fiyat'
+    timeout: 10000
+- assertVisible: 'Güncelle'
+- takeScreenshot: 05-fiyat-duzenleme
+
+# ER-5: 0 değeri girilir, Güncelle'ye basılır → DOĞRULAMA HATASI BEKLENİR
+# (bilinen hatada: doğrulama yok, 0 ₺ kaydediliyor → bu assert FAIL verir = hatayı belgeler)
+- tapOn:
+    point: 50%,74%
+- inputText: '0'
+- takeScreenshot: 06-sifir-girildi
+- tapOn: 'Güncelle'
+- extendedWaitUntil:
+    visible: '.*(geçerli|hatalı|geçersiz|büyük olmalı|sıfır).*'
+    timeout: 8000
+- takeScreenshot: 07-dogrulama-hatasi
