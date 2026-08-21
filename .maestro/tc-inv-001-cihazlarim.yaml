@@ -1,0 +1,34 @@
+# TC-INV-001 — Satıcı cihaz envanterini görüntüler (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/inventory/TC-INV-001-vendor-list-my-devices.md
+# Yapı: Alt menü "Cihazlar" → hub (Cihazlarım / Aksesuarlarım) → Cihazlarım listesi
+# Değer kontrolleri: cihaz satırı, ürün kodu, ₺ fiyat formatı, durum sekmeleri
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+# 1) Cihazlar hub'ı
+- tapOn: 'Cihazlar'
+- extendedWaitUntil:
+    visible: '.*Cihazlarım.*'
+    timeout: 15000
+- assertVisible: '.*Aksesuarlarım.*'
+- takeScreenshot: 04-cihazlar-hub
+
+# 2) Cihazlarım listesine gir
+- tapOn:
+    text: '.*, Cihazlarım, .*'
+
+# 3) Liste sayfası — UI kontrolleri (ER-1)
+- extendedWaitUntil:
+    visible: '.*Filtrele'
+    timeout: 15000
+- assertVisible: '.*Sırala'
+- assertVisible: 'Online Satışa Açık.*'     # durum sekmesi (sayaçlı)
+
+# 4) Değer kontrolleri (ER-2/ER-5)
+- assertVisible: 'Apple.*'                  # en az bir cihaz satırı
+- assertVisible: 'Ürün Kodu'
+- assertVisible: 'Buybox Fiyatı'
+- assertVisible: 'Satış Fiyatı'
+- assertVisible: '[0-9][0-9.,]* ₺'          # TRY fiyat formatı (pozitif değer)
+- takeScreenshot: 05-cihazlarim-listesi

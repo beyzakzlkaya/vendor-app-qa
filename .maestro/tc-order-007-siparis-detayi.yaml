@@ -1,0 +1,63 @@
+# TC-ORDER-007 — Sipariş detayı içerik doğrulaması (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/order/TC-ORDER-007-order-detail.md
+# Odak: detay sayfasındaki alanların İÇERİK kontrolleri (adresler, tutar formatı, sipariş no)
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+# Sipariş listesine in (hub üzerinden)
+- tapOn: 'Siparişler'
+- extendedWaitUntil:
+    visible: '.*Mağazada Sattıklarım.*'
+    timeout: 15000
+- tapOn:
+    text: '.*, Siparişler, .*'
+- extendedWaitUntil:
+    visible: '.*Filtrele'
+    timeout: 15000
+
+# Liste değer kontrolleri: sipariş no formatı ve tutar
+- assertVisible: 'Sipariş Numarası'
+- assertVisible: '[A-Z]{2,6}[0-9]{6,}'      # sipariş numarası formatı (örn. ONGMN00847406)
+- assertVisible: 'Toplam Tutar:'
+- assertVisible: '[0-9][0-9.,]* ₺'          # tutar TRY formatı
+
+# Detaya gir (ER-1)
+- tapOn: 'Detayı Gör'
+
+# "Devredilen Sipariş" modalı sayfa verisi yüklendikten SONRA gecikmeli gelebiliyor —
+# iki turlu kapatma: uzun bekle+kapat, sayfayı dene, geç gelirse tekrar kapat
+- extendedWaitUntil:
+    visible: 'Anladım'
+    timeout: 20000
+    optional: true
+- runFlow:
+    when:
+      visible: 'Anladım'
+    commands:
+      - tapOn: 'Anladım'
+- extendedWaitUntil:
+    visible: 'Detay'
+    timeout: 10000
+    optional: true
+- runFlow:
+    when:
+      visible: 'Anladım'
+    commands:
+      - tapOn: 'Anladım'
+
+# Detay içerik kontrolleri (ER-4/ER-6 mobil karşılığı)
+- extendedWaitUntil:
+    visible: 'Detay'
+    timeout: 15000
+- assertVisible: 'Satış Kanalı'
+- takeScreenshot: 06-detay-ust
+
+# Adres ve tutar bölümlerine kaydırarak içerik doğrula
+- scrollUntilVisible:
+    element:
+      text: 'Teslimat Adresi:'
+    direction: DOWN
+- assertVisible: 'Teslimat Adresi:'
+- assertVisible: 'Fatura Adresi:'
+- takeScreenshot: 07-detay-adresler

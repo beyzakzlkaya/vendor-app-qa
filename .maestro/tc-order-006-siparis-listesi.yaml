@@ -50,10 +50,20 @@ appId: com.getmobil.vendor
     timeout: 10000
 - tapOn: 'Detayı Gör'
 
-# 6) Detay sayfası — "Devredilen Sipariş" modalı çıkarsa kapat
+# 6) Detay sayfası — "Devredilen Sipariş" modalı gecikmeli gelebiliyor,
+# iki turlu kapatma deseni
 - extendedWaitUntil:
     visible: 'Anladım'
-    timeout: 8000
+    timeout: 20000
+    optional: true
+- runFlow:
+    when:
+      visible: 'Anladım'
+    commands:
+      - tapOn: 'Anladım'
+- extendedWaitUntil:
+    visible: 'Detay'
+    timeout: 10000
     optional: true
 - runFlow:
     when:

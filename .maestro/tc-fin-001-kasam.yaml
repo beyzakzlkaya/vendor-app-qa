@@ -17,6 +17,12 @@ appId: com.getmobil.vendor
     timeout: 15000
 - assertVisible: 'Vadesi Gelmiş'
 - assertVisible: 'Hızlı İşlemler'
+
+# Değer kontrolleri (ER-2): bakiye TRY formatında bir sayı olmalı
+- assertVisible: '-?[0-9][0-9.,]* ₺'  # bakiye formatı (negatif olabilir)
+- assertVisible: 'Kullanılabilir'
+- assertVisible: '.*Para Yükle.*'
+- assertVisible: '.*Para Çek.*'
 - takeScreenshot: 04-kasam-bakiye
 
 # 3) İşlem geçmişi (ER-3 karşılığı): Son İşlemler bölümüne kaydır

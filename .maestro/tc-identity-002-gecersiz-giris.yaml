@@ -1,0 +1,46 @@
+# TC-IDENTITY-002 — Geçersiz kimlik bilgisiyle giriş reddedilir (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/identity/TC-IDENTITY-002-vendor-login-invalid-credentials.md
+# ER-1: giriş ekranında kalınır  ER-2: hata mesajı görünür  ER-5: form etkileşimli kalır
+appId: com.getmobil.vendor
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- tapOn: 'Giriş Yap'
+- assertVisible:
+    id: 'login_username_input'
+- tapOn:
+    id: 'login_username_input'
+- inputText: ${TEST_EMAIL}
+- tapOn:
+    id: 'login_password_input'
+- inputText: 'YanlisSifre123!'
+- hideKeyboard
+- extendedWaitUntil:
+    visible: 'Not Now'
+    timeout: 4000
+    optional: true
+- runFlow:
+    when:
+      visible: 'Not Now'
+    commands:
+      - tapOn: 'Not Now'
+- tapOn:
+    point: 32%,62%
+- tapOn:
+    id: 'login_button'
+- takeScreenshot: 03-yanlis-sifre-denemesi
+
+# ER-2: hata mesajı görünmeli
+# (uygulamanın gerçek metni: "Giriş bilgileri veya şifre yanlış girildi")
+- extendedWaitUntil:
+    visible: '.*(yanlış|[hH]atalı).*'
+    timeout: 15000
+- takeScreenshot: 04-hata-mesaji
+
+# ER-1 + ER-5: hâlâ giriş ekranındayız ve form etkileşimli
+- assertVisible:
+    id: 'login_username_input'
+- assertVisible:
+    id: 'login_button'

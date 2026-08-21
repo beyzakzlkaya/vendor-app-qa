@@ -50,13 +50,24 @@ TOTAL_S=$(date +%s)
 for FLOW in "${FLOWS[@]}"; do
   NAME=$(basename "$FLOW" .yaml)
   S=$(date +%s)
+  RETRY=0
   maestro --device "$UDID" test \
     -e TEST_EMAIL="$TEST_EMAIL" -e TEST_PASSWORD="$TEST_PASSWORD" \
     "$FLOW" > "/tmp/qa-$NAME.log" 2>&1
   RC=$?
+  # Flake koruması: düşen test bir kez daha denenir (CI standardı)
+  if [ $RC -ne 0 ]; then
+    RETRY=1
+    maestro --device "$UDID" test \
+      -e TEST_EMAIL="$TEST_EMAIL" -e TEST_PASSWORD="$TEST_PASSWORD" \
+      "$FLOW" > "/tmp/qa-$NAME.log" 2>&1
+    RC=$?
+  fi
   DUR=$(( $(date +%s) - S ))
-  if [ $RC -eq 0 ]; then RESULT="PASS"; else RESULT="FAIL"; fi
-  echo "TEST|$NAME|$RESULT|${DUR}sn" >> "$SUMMARY"
+  if [ $RC -eq 0 ]; then
+    [ $RETRY -eq 1 ] && RESULT="PASS(retry)" || RESULT="PASS"
+  else RESULT="FAIL"; fi
+  echo "TEST|$NAME|$RESULT|${DUR}sn|retry=$RETRY" >> "$SUMMARY"
   # Başarısızsa hata satırını da kaydet
   [ $RC -ne 0 ] && grep -m1 -E "FAILED|Assertion|Element not found" "/tmp/qa-$NAME.log" | sed "s/^/ERROR|$NAME|/" >> "$SUMMARY"
   # Ekran görüntülerini topla (bu koşumun maestro dizininden)

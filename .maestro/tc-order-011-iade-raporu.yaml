@@ -1,0 +1,29 @@
+# TC-ORDER-011 — İade raporu görüntüleme (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/order/TC-ORDER-011-return-report.md
+# Değer kontrolleri: iade sayaçları (Adet), kaybedilen ciro (TL), sebep dağılımı
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+# Siparişler hub'ından İade Raporu'na gir
+- tapOn: 'Siparişler'
+- extendedWaitUntil:
+    visible: '.*İade Raporu.*'
+    timeout: 15000
+- tapOn:
+    text: '.*, İade Raporu, .*'
+
+# Sayfa yüklendi (ER-1) — rapora özgü öğeler
+- extendedWaitUntil:
+    visible: 'Toplam İade'
+    timeout: 15000
+- assertVisible: 'Bayi Kaynaklı İade Sayısı'
+- assertVisible: 'Müşteri Kaynaklı İade Sayısı'
+- assertVisible: 'Kaybedilen Ciro'
+
+# Değer kontrolleri (ER-3 mobil karşılığı): sayaç ve ciro formatları
+- assertVisible: '[0-9]+ Adet'               # iade sayacı formatı
+- assertVisible: '[0-9][0-9.,]* TL'          # ciro TL formatı
+- assertVisible: 'İade Sebepleri Dağılımı'
+- assertNotVisible: 'Bir hata oluştu'
+- takeScreenshot: 04-iade-raporu
