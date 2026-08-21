@@ -46,7 +46,16 @@ Her Maestro koşumundan sonra bu şablon doldurulur ve belirlenen Slack kanalın
 📱 Cihaz: {{DEVICE_NAME}}
 🧩 İşletim sistemi: {{OS_VERSION}}
 🔁 Deneme sayısı: {{RETRY_COUNT}}
+📋 Jira kaydı: {{JIRA_KEY}} — {{JIRA_URL}}
 ```
+
+## Bug → Jira kuralı (Beyza'nın talimatı, 21 Ağu 2026)
+
+Gerçek bir uygulama hatası bulunduğunda (test altyapı hatası DEĞİL):
+1. NE projesinde **Bug** tipinde kayıt aç (öncelik: etkiye göre, etiketler: qa-otomasyon, partner-app, ortam)
+2. Kaydı **aktif sprint'e** ekle (Board 35 — Getmobil Technology Board)
+3. Test result Slack mesajının Hata Detayı bölümüne **Jira linkini** ekle
+4. Kayıt içeriği: özet, beklenen/gerçekleşen, yeniden üretme adımları, artifact rapor linki, temizlik notu
 
 ## Doldurma kuralları
 
