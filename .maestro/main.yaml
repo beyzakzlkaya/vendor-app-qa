@@ -1,0 +1,9 @@
+appId: com.getmobil.vendor
+---
+- launchApp:
+    clearState: true
+- runFlow: login.yaml
+- runFlow: dashboard.yaml
+- runFlow: subflows/verify_module_drawer_content.yaml
+- runFlow: subflows/open_drawer_and_logout.yaml
+- stopApp

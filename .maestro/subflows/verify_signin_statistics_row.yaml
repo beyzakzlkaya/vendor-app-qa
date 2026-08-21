@@ -1,0 +1,30 @@
+appId: com.getmobil.vendor
+---
+# Verify the statistics row on SignInScreen
+# Scroll to the section and assert texts are visible
+- scrollUntilVisible:
+    element:
+      text: 'Aktif Partner'
+    direction: DOWN
+- assertVisible:
+    text: 'Aktif Partner'
+- assertVisible:
+    text: '300 +'
+
+- assertVisible:
+    text: 'Aylık Sipariş'
+- assertVisible:
+    text: '20K +'
+
+- assertVisible:
+    text: 'Aktif Müşteri'
+- assertVisible:
+    text: '700K +'
+
+# Return to the top to keep subsequent steps stable
+- scrollUntilVisible:
+    element:
+      id: 'login_username_input'
+    direction: UP
+- assertVisible:
+    id: 'login_username_input'

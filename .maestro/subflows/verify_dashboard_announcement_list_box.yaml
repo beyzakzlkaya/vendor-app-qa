@@ -1,0 +1,10 @@
+appId: com.getmobil.vendor
+---
+- scrollUntilVisible:
+    element:
+      text: 'Duyurular'
+    direction: DOWN
+- assertVisible:
+    text: 'Duyurular'
+- assertVisible:
+    text: 'Yayınlanmış bir duyuru bulunmamaktadır.'

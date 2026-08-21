@@ -1,0 +1,12 @@
+appId: com.getmobil.vendor
+---
+- scrollUntilVisible:
+    element:
+      text: 'Bu Ay Toplam Ciro'
+    direction: DOWN
+- assertVisible:
+    text: 'Bu Ay Toplam Ciro'
+- assertVisible:
+    text: 'Ay Sonu Tahmini Ciro'
+- assertVisible:
+    text: 'Canlı Performansım'

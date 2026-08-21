@@ -1,0 +1,5 @@
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/verify_dashboard_vendor_box.yaml
+- runFlow: subflows/verify_dashboard_sales_performance_box.yaml
+- runFlow: subflows/verify_dashboard_announcement_list_box.yaml

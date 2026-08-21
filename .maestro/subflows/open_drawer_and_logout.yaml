@@ -1,0 +1,13 @@
+appId: com.getmobil.vendor
+---
+# Open the drawer via header button and tap the Logout action
+- tapOn:
+    id: 'drawer_menu_button'
+
+- scrollUntilVisible:
+    element:
+      text: 'Çıkış Yap'
+    direction: DOWN
+
+- tapOn:
+    text: 'Çıkış Yap'
