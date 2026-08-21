@@ -13,3 +13,6 @@ reports/
 
 # App reposunun yerel klonu — ayrı repo, buraya konmaz
 getmobil-vendor-mobile-app/
+
+# CI: uygulama build env dosyası (client secret içerir) — git dışı
+ci/app-env-preprod

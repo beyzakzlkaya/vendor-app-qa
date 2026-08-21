@@ -1,0 +1,59 @@
+# ÖNERİ: Getmobil/getmobil-vendor-mobile-app reposuna eklenecek workflow
+# Konum: .github/workflows/qa-e2e-check.yml
+#
+# Bu dosya şimdilik ÖNERİ olarak vendor-app-qa reposunda duruyor.
+# Devreye alma koşulları (org admin gerektirir):
+#   1. Getmobil org'una self-hosted macOS runner kaydı (etiket: qa-mac)
+#      → şimdilik Beyza'nın Mac'i; ileride ofiste ayrılmış bir Mac önerilir
+#   2. Repo secrets: QA_SLACK_WEBHOOK_URL, QA_TEST_EMAIL, QA_TEST_PASSWORD
+#   3. Bu dosyanın PR ile eklenmesi + branch protection'da status check olarak seçilmesi
+#
+# Devreye alınana kadar aynı işi vendor-app-qa/ci/pr-watcher.sh (launchd, 10 dk)
+# yorum-tabanlı olarak yapıyor.
+
+name: QA E2E Check
+
+on:
+  pull_request:
+    branches: [preprod, master]
+  push:
+    branches: [preprod]
+
+concurrency:
+  group: qa-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-smoke:
+    name: iOS E2E duman süiti (Maestro)
+    runs-on: [self-hosted, macOS, qa-mac]
+    timeout-minutes: 60
+    steps:
+      - name: QA repo'yu hazırla
+        run: |
+          if [ -d "$HOME/qa-ci/vendor-app-qa" ]; then
+            git -C "$HOME/qa-ci/vendor-app-qa" pull --quiet
+          else
+            git clone https://github.com/beyzakzlkaya/vendor-app-qa "$HOME/qa-ci/vendor-app-qa"
+          fi
+
+      - name: PR'ı kontrol et (build + smoke süiti + rapor)
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.QA_SLACK_WEBHOOK_URL }}
+          TEST_EMAIL: ${{ secrets.QA_TEST_EMAIL }}
+          TEST_PASSWORD: ${{ secrets.QA_TEST_PASSWORD }}
+        run: |
+          cd "$HOME/qa-ci/vendor-app-qa"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./ci/pr-check.sh "${{ github.event.pull_request.number }}"
+          else
+            BRANCH="${{ github.ref_name }}" FULL=1 ./ci/pr-check.sh
+          fi
+
+      - name: Kanıtları artifact olarak yükle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-evidence-${{ github.run_id }}
+          path: ~/qa-ci/vendor-app-qa/reports/evidence/
+          retention-days: 14

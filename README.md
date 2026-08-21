@@ -41,3 +41,13 @@ vendor-app-qa/
 - [ ] Android universal `.apk` (her release'te — CI artifact olarak idealdir)
 - [ ] iOS simulator build `.app` (arm64, `xcodebuild -sdk iphonesimulator`)
 - [x] Test ortamı (preprod) kullanıcı hesabı → `.env` dosyasında (git'e gönderilmez)
+
+## CI — PR başına otomatik kontrol (21 Ağustos 2026)
+
+Her açık PR, bu Mac'te 10 dakikada bir çalışan izleyiciyle otomatik test edilir:
+
+- `ci/pr-watcher.sh` — launchd (`com.getmobil.qa-pr-watcher`, 10 dk) app repodaki PR'ları izler; yeni head SHA'yı `ci/pr-check.sh`'a verir
+- `ci/pr-check.sh` — PR branch'ini çeker, gerekirse bağımlılıkları kurar, simulator build alır, duman süitini koşar (FULL=1 → 7'li tam süit), sonucu **PR yorumu + Slack** olarak yayınlar
+- Durum/loglar: `~/.qa-ci/` (watcher.log, logs/, tested-shas.txt)
+- Durdur/başlat: `launchctl unload|load ~/Library/LaunchAgents/com.getmobil.qa-pr-watcher.plist`
+- `ci/github-workflow-onerisi.yml` — dev ekibi onaylayınca app repoya taşınacak resmi Actions workflow'u (status check + merge engelleme için)
