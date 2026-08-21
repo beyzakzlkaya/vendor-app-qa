@@ -1,13 +1,28 @@
-# TC-FIN-001 — Satıcı cüzdan bakiyesini ve işlem geçmişini görüntüler (mobil uyarlama)
+# TC-FIN-001 — Satıcı cüzdan bakiyesini ve işlem geçmişini görüntüler (mobil uyarlama v2)
 # Kaynak: getmobil-e2e-test-prompt-library/domains/financials/TC-FIN-001-vendor-view-wallet.md
+#
+# Uygulama yapısı: Alt menü "Kasam" → doğrudan cüzdan sayfası
+# (Toplam Bakiye, Vadesi Gelmiş/Gelmemiş, Hızlı İşlemler, Son İşlemler)
+# Doğrulamalar sayfaya ÖZGÜ öğelerle — bulunamazsa test HATA verir.
 appId: com.getmobil.vendor
 ---
 - runFlow: subflows/giris.yaml
 
-# Kasam (cüzdan) sekmesine geç
+# 1) Kasam sekmesine geç
 - tapOn: 'Kasam'
+
+# 2) Cüzdan sayfası doğrulaması — cüzdana özgü öğeler (ER-1/ER-2 karşılığı)
 - extendedWaitUntil:
-    visible: 'Kasam'
+    visible: 'Toplam Bakiye'          # cüzdana özgü — yoksa yanlış ekrandayız
     timeout: 15000
-- assertNotVisible: 'Bir hata oluştu'
-- takeScreenshot: 04-kasam-ekrani
+- assertVisible: 'Vadesi Gelmiş'
+- assertVisible: 'Hızlı İşlemler'
+- takeScreenshot: 04-kasam-bakiye
+
+# 3) İşlem geçmişi (ER-3 karşılığı): Son İşlemler bölümüne kaydır
+- scrollUntilVisible:
+    element:
+      text: 'Son İşlemler'
+    direction: DOWN
+- assertVisible: 'Son İşlemler'
+- takeScreenshot: 05-son-islemler

@@ -1,13 +1,69 @@
-# TC-ORDER-006 — Satıcı sipariş listesini görüntüler (mobil uyarlama)
+# TC-ORDER-006 — Satıcı sipariş listesini görüntüler (mobil uyarlama v2)
 # Kaynak: getmobil-e2e-test-prompt-library/domains/order/TC-ORDER-006-view-order-list.md
+#
+# Uygulama yapısı (21 Ağu 2026 keşfi):
+#   Alt menü "Siparişler" → HUB ekranı (Siparişler / Mağazada Sattıklarım /
+#   İade Yönetimi / İade Raporu / Fatura Yönetimi)
+#   → Hub'daki "Siparişler" kartı → GERÇEK sipariş listesi
+#     (arama, Sırala/Filtrele, durum sekmeleri, sipariş kartları)
+#   → "Detayı Gör" → sipariş detay sayfası
+# Her adımın doğrulaması o sayfaya ÖZGÜ öğelerle yapılır — bulunamazsa test HATA verir.
 appId: com.getmobil.vendor
 ---
 - runFlow: subflows/giris.yaml
 
-# Siparişler sekmesine geç
+# 1) Alt menüden Siparişler hub'ına geç
+# Not: hub kartlarının erişilebilirlik metni ikon glifleriyle birleşik
+# ("<ikon>, Mağazada Sattıklarım, <ikon>") — bu yüzden .* desenleri şart
 - tapOn: 'Siparişler'
 - extendedWaitUntil:
-    visible: 'Siparişler'
+    visible: '.*Mağazada Sattıklarım.*'   # hub'a özgü — yoksa yanlış ekrandayız
     timeout: 15000
-- assertNotVisible: 'Bir hata oluştu'
-- takeScreenshot: 04-siparis-listesi
+- assertVisible: '.*İade Yönetimi.*'
+- takeScreenshot: 04-siparisler-hub
+
+# 2) Hub'daki "Siparişler" KARTINA gir — ikonlu desen karta özgüdür
+#    (alt sekme ve sayfa başlığı düz "Siparişler" olduğu için karışmaz)
+- tapOn:
+    text: '.*, Siparişler, .*'
+
+# 3) Gerçek sipariş listesi doğrulaması — listeye özgü öğeler
+# (buton metinleri ikon önekli: "<ikon>, Filtrele" — .* öneki şart)
+- extendedWaitUntil:
+    visible: '.*Filtrele'             # liste sayfasına özgü
+    timeout: 15000
+- assertVisible: '.*Sırala'
+- assertVisible: 'Yeni Sipariş'       # durum sekmesi
+- takeScreenshot: 05-siparis-listesi
+
+# 4) Durum filtresi: Kargoda sekmesi (kütüphane case'inin filtre adımı)
+- tapOn: 'Kargoda'
+- extendedWaitUntil:
+    visible: '.*Filtrele'
+    timeout: 10000
+- takeScreenshot: 06-kargoda-filtresi
+
+# 5) Yeni Sipariş sekmesine dön ve ilk siparişin detayına gir
+- tapOn: 'Yeni Sipariş'
+- extendedWaitUntil:
+    visible: 'Detayı Gör'
+    timeout: 10000
+- tapOn: 'Detayı Gör'
+
+# 6) Detay sayfası — "Devredilen Sipariş" modalı çıkarsa kapat
+- extendedWaitUntil:
+    visible: 'Anladım'
+    timeout: 8000
+    optional: true
+- runFlow:
+    when:
+      visible: 'Anladım'
+    commands:
+      - tapOn: 'Anladım'
+
+# 7) Detay sayfası doğrulaması — sayfaya özgü öğeler
+- extendedWaitUntil:
+    visible: 'Detay'
+    timeout: 15000
+- assertVisible: 'Satış Kanalı'
+- takeScreenshot: 07-siparis-detayi
