@@ -1,0 +1,16 @@
+# TC-ORDER-006 — Satıcı sipariş listesini görüntüler (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/order/TC-ORDER-006-view-order-list.md
+# Web case'inin mobil karşılığı: Siparişler sekmesi açılır, liste ekranı hatasız yüklenir.
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+# Siparişler sekmesine geç
+- tapOn: 'Siparişler'
+
+# Ekran yüklendi mi? (başlık/sekme görünür, hata yok)
+- extendedWaitUntil:
+    visible: 'Siparişler'
+    timeout: 15000
+- assertNotVisible: 'Bir hata oluştu'
+- takeScreenshot: siparis-listesi

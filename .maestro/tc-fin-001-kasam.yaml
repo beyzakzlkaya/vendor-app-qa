@@ -1,0 +1,16 @@
+# TC-FIN-001 — Satıcı cüzdan bakiyesini ve işlem geçmişini görüntüler (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/financials/TC-FIN-001-vendor-view-wallet.md
+# Web case'inin mobil karşılığı: Kasam sekmesi açılır, bakiye alanı hatasız yüklenir.
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+# Kasam (cüzdan) sekmesine geç
+- tapOn: 'Kasam'
+
+# Ekran yüklendi mi?
+- extendedWaitUntil:
+    visible: 'Kasam'
+    timeout: 15000
+- assertNotVisible: 'Bir hata oluştu'
+- takeScreenshot: kasam-ekrani
