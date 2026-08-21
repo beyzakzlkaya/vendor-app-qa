@@ -9,6 +9,7 @@ appId: com.getmobil.vendor
 - tapOn: 'Giriş Yap'
 - assertVisible:
     id: 'login_username_input'
+- takeScreenshot: 01-giris-ekrani
 - tapOn:
     id: 'login_username_input'
 - inputText: ${TEST_EMAIL}
@@ -16,11 +17,23 @@ appId: com.getmobil.vendor
     id: 'login_password_input'
 - inputText: ${TEST_PASSWORD}
 - hideKeyboard
+- takeScreenshot: 02-form-dolduruldu
+
+# iOS "Save Password?" diyaloğu: bazı cihazlarda (örn. iPhone Air) Maestro
+# hiyerarşisinde GÖRÜNMÜYOR, o yüzden iki katmanlı savunma:
+# 1) Görünüyorsa metinle kapat  2) Görünmüyorsa "Not Now" konumuna kör dokunuş
+#    (diyalog yoksa form kartının boş alanına denk gelir, zararsızdır)
+- extendedWaitUntil:
+    visible: 'Not Now'
+    timeout: 4000
+    optional: true
 - runFlow:
     when:
       visible: 'Not Now'
     commands:
       - tapOn: 'Not Now'
+- tapOn:
+    point: 32%,62%
 - tapOn:
     id: 'login_button'
 - extendedWaitUntil:
@@ -35,3 +48,4 @@ appId: com.getmobil.vendor
 - extendedWaitUntil:
     visible: 'Anasayfa'
     timeout: 20000
+- takeScreenshot: 03-anasayfa

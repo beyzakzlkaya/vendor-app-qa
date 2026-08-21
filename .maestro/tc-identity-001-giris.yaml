@@ -1,0 +1,5 @@
+# TC-IDENTITY-001 — Satıcı girişi, mutlu yol (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/identity/TC-IDENTITY-001-vendor-login.md
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
