@@ -11,6 +11,25 @@ set -a; source .env 2>/dev/null; set +a
 
 APP_PATH="${QA_APP_PATH:-/Users/beyzakizilkaya/qa-vendor-build/ios/build/Build/Products/Release-iphonesimulator/getmobilvendor.app}"
 BUNDLE_ID="com.getmobil.vendor"
+BUILD_REPO="$HOME/qa-vendor-build"
+
+# ── Güncellik kontrolü: build, origin/preprod'un son haliyle aynı mı?
+# Eski build'le koşulan test yanıltıcıdır — geride kalındıysa uyar (AUTO_UPDATE=1 → önce güncelle+derle)
+if [ -d "$BUILD_REPO/.git" ] && [ -z "${QA_SKIP_FRESHNESS:-}" ]; then
+  git -C "$BUILD_REPO" fetch origin preprod --quiet 2>/dev/null
+  LOCAL_SHA=$(git -C "$BUILD_REPO" rev-parse HEAD 2>/dev/null)
+  REMOTE_SHA=$(git -C "$BUILD_REPO" rev-parse origin/preprod 2>/dev/null)
+  if [ -n "$REMOTE_SHA" ] && [ "$LOCAL_SHA" != "$REMOTE_SHA" ]; then
+    BEHIND=$(git -C "$BUILD_REPO" rev-list --count HEAD..origin/preprod 2>/dev/null || echo "?")
+    if [ "${AUTO_UPDATE:-0}" = "1" ]; then
+      echo "⬆️  Build $BEHIND commit geride — AUTO_UPDATE=1: güncelleniyor ve yeniden derleniyor..."
+      BRANCH=preprod "$(cd "$(dirname "$0")" && pwd)/ci/pr-check.sh" || { echo "güncelleme başarısız"; exit 1; }
+    else
+      echo "⚠️  UYARI: Build, origin/preprod'dan $BEHIND commit GERİDE (yerel: ${LOCAL_SHA:0:8}, uzak: ${REMOTE_SHA:0:8})."
+      echo "    Güncel sürümle koşmak için: AUTO_UPDATE=1 ./qa-run.sh   veya   BRANCH=preprod ./ci/pr-check.sh"
+    fi
+  fi
+fi
 
 # ── Cihaz seçimi: QA_DEVICE_UDID > ilk açık simülatör > iPhone 17'yi boot et
 UDID="${QA_DEVICE_UDID:-}"
@@ -41,6 +60,7 @@ echo "DEVICE_NAME=$DEVICE_NAME" >> "$SUMMARY"
 echo "DEVICE_UDID=$UDID" >> "$SUMMARY"
 echo "OS_VERSION=iOS $OS_VERSION" >> "$SUMMARY"
 echo "APP_VERSION=$APP_VERSION" >> "$SUMMARY"
+echo "APP_COMMIT=$(git -C "$BUILD_REPO" rev-parse --short HEAD 2>/dev/null || echo bilinmiyor)" >> "$SUMMARY"
 echo "RUN_DATE=$(date '+%d.%m.%Y %H:%M')" >> "$SUMMARY"
 
 FLOWS=("$@")
