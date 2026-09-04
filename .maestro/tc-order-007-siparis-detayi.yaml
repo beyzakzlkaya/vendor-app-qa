@@ -18,7 +18,7 @@ appId: com.getmobil.vendor
 
 # Liste değer kontrolleri: sipariş no formatı ve tutar
 - assertVisible: 'Sipariş Numarası'
-- assertVisible: '[A-Z]{2,6}[0-9]{6,}'      # sipariş numarası formatı (örn. ONGMN00847406)
+- assertVisible: '[A-Z][A-Z0-9]{2,5}[0-9]{6,}'      # sipariş no formatı (ONGMN00847406, B2BN84926980 gibi kanal önekleri)
 - assertVisible: 'Toplam Tutar:'
 - assertVisible: '[0-9][0-9.,]* ₺'          # tutar TRY formatı
 
