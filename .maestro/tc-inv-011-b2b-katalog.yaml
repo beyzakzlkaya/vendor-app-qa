@@ -1,0 +1,35 @@
+# TC-INV-011 — B2B katalog görüntüleme (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/inventory/TC-INV-011-b2b-catalog.md
+# Yapı: çekmece → Tezgah (B2B pazaryeri). Sekmeler: Bayi Cihazları / Getmobil Cihazları /
+# Aksesuarlar / Cihaz Sat / Ürünlerim / Aldıklarım. Filtreler: Marka, Şehir, Kozmetik Durum.
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+- tapOn:
+    point: 10%,11%
+- extendedWaitUntil:
+    visible: 'Tezgah'
+    timeout: 10000
+- tapOn: 'Tezgah'
+
+# Sayfa doğrulaması — Tezgah'a özgü sekme seti
+- extendedWaitUntil:
+    visible: 'Bayi Cihazları'
+    timeout: 15000
+- assertVisible: 'Getmobil Cihazları'
+- assertVisible: 'Cihaz Sat'
+- assertVisible: 'Aldıklarım'
+
+# Filtre kontrolleri (ER: manufacturer/category filtre karşılıkları)
+- assertVisible: 'Marka'
+- assertVisible: 'Şehir'
+- assertVisible: 'Kozmetik Durum'
+- assertVisible: 'Liste filtrele'
+- assertNotVisible: 'Bir hata oluştu'
+- takeScreenshot: 04-tezgah-b2b
+
+# Sekme geçişi: Getmobil Cihazları (salt-okunur)
+- tapOn: 'Getmobil Cihazları'
+- assertNotVisible: 'Bir hata oluştu'
+- takeScreenshot: 05-getmobil-cihazlari
