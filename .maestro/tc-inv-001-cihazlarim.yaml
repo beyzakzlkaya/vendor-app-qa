@@ -23,12 +23,12 @@ appId: com.getmobil.vendor
     visible: '.*Filtrele'
     timeout: 15000
 - assertVisible: '.*Sırala'
-- assertVisible: 'Online Satışa Açık.*'     # durum sekmesi (sayaçlı)
+- assertVisible: '(Online )?Satışa Açık.*'   # durum sekmesi — etiket hesaba göre değişir (mağaza modlu hesapta 'Satışa Açık • N')
 
 # 4) Değer kontrolleri (ER-2/ER-5)
 - assertVisible: 'Apple.*'                  # en az bir cihaz satırı
-- assertVisible: 'Ürün Kodu'
+- assertVisible: '(Ürün Kodu|SKU:?)'         # mağaza modlu hesapta 'SKU:'
 - assertVisible: 'Buybox Fiyatı'
-- assertVisible: 'Satış Fiyatı'
+- assertVisible: '(Online )?Satış Fiyatı'    # mağaza modlu hesapta 'Online Satış Fiyatı'
 - assertVisible: '[0-9][0-9.,]* ₺'          # TRY fiyat formatı (pozitif değer)
 - takeScreenshot: 05-cihazlarim-listesi

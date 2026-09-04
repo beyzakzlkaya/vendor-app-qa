@@ -51,3 +51,17 @@ Her açık PR, bu Mac'te 10 dakikada bir çalışan izleyiciyle otomatik test ed
 - Durum/loglar: `~/.qa-ci/` (watcher.log, logs/, tested-shas.txt)
 - Durdur/başlat: `launchctl unload|load ~/Library/LaunchAgents/com.getmobil.qa-pr-watcher.plist`
 - `ci/github-workflow-onerisi.yml` — dev ekibi onaylayınca app repoya taşınacak resmi Actions workflow'u (status check + merge engelleme için)
+
+## Yeni QA makinesi kurulumu (4 Eylül 2026 — Lorin'in kurulumundan dersler)
+
+1. **Önkoşullar:** Xcode + iOS platformu, `brew install mobile-dev-inc/tap/maestro cocoapods node`, `gh auth login`
+2. **Build klonu:** `gh repo clone Getmobil/getmobil-vendor-mobile-app ~/qa-vendor-build` → `.env`'i preprod değerleriyle oluştur (bkz. ci/app-env-preprod şablonu — QA ekibinden isteyin, git'te YOK)
+3. **Bu repo:** `.env` dosyasını oluştur (TEST_EMAIL, TEST_PASSWORD, SLACK_WEBHOOK_URL — git'te YOK)
+4. **Simülatörde AutoFill'i kapatın** (bir kez): Settings → General → AutoFill & Passwords → kapalı.
+   Kapatılmazsa her girişte "Save Password" diyaloğu çıkar; testler yine geçer (iki katmanlı savunma var)
+   ama süreler uzar ve retry oranı artar.
+5. İlk koşum: `AUTO_UPDATE=1 ./qa-run.sh` (güncel preprod'u derler + koşar)
+
+**Hesaba bağlı etiketler:** bazı ekran etiketleri hesabın yeteneklerine göre değişir
+(mağaza modlu hesapta: "Satışa Açık • N", "SKU:", "Online Satış Fiyatı"). Test desenleri
+iki varyantı da kapsar — yeni varyant görürseniz deseni genişletin, testi hesaba özel yazmayın.

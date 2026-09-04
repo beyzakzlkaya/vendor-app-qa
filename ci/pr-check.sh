@@ -43,7 +43,7 @@ echo "HEAD: $HEAD_SHA"
 grep -q '"19.1.1" !== isomorphicReactPackageVersion' node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-prod.js 2>/dev/null && \
   sed -i '' 's/"19\.1\.1" !== isomorphicReactPackageVersion/"19.1.2" !== isomorphicReactPackageVersion/g' node_modules/react-native/Libraries/Renderer/implementations/ReactNativeRenderer-*.js
 [ "$(md5 -q ios/Podfile.lock)" != "$OLD_POD_HASH" ] && { echo "pod install..."; (cd ios && pod install) >/dev/null 2>&1 || exit 3; }
-[ -f ios/.xcode.env.local ] || echo 'export NODE_BINARY=/opt/homebrew/bin/node' > ios/.xcode.env.local
+echo "export NODE_BINARY=$(command -v node)" > ios/.xcode.env.local   # her koşumda tazele (makineden bağımsız)
 [ -f .env ] || cp "$QA_DIR/ci/app-env-preprod" .env 2>/dev/null || true
 
 # ── 3) Build

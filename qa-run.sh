@@ -9,7 +9,7 @@ set -u
 cd "$(dirname "$0")"
 set -a; source .env 2>/dev/null; set +a
 
-APP_PATH="${QA_APP_PATH:-/Users/beyzakizilkaya/qa-vendor-build/ios/build/Build/Products/Release-iphonesimulator/getmobilvendor.app}"
+APP_PATH="${QA_APP_PATH:-$HOME/qa-vendor-build/ios/build/Build/Products/Release-iphonesimulator/getmobilvendor.app}"
 BUNDLE_ID="com.getmobil.vendor"
 BUILD_REPO="$HOME/qa-vendor-build"
 
@@ -37,17 +37,26 @@ if [ -z "$UDID" ]; then
   UDID=$(xcrun simctl list devices booted | grep -oE '[A-F0-9-]{36}' | head -1)
 fi
 if [ -z "$UDID" ]; then
-  UDID="7CD8F910-19BE-44DF-9453-9367D0CCBD2C"
-  xcrun simctl boot "$UDID" 2>/dev/null
+  # Makineden bağımsız: mevcut ilk iPhone simülatörünü seç ve boot et (Lorin'in düzeltmesi)
+  UDID=$(xcrun simctl list devices available | grep -E "iPhone" | grep -oE '[A-F0-9-]{36}' | head -1)
+  [ -n "$UDID" ] && xcrun simctl boot "$UDID" 2>/dev/null
 fi
+[ -z "$UDID" ] && { echo "HATA: kullanılabilir iPhone simülatörü yok"; exit 1; }
 xcrun simctl bootstatus "$UDID" -b >/dev/null 2>&1
 
 DEVICE_NAME=$(xcrun simctl list devices | grep "$UDID" | head -1 | sed -E 's/^ *(.*) \([A-F0-9-]{36}.*$/\1/')
 OS_VERSION=$(xcrun simctl list devices | grep -B50 "$UDID" | grep -E "^-- iOS" | tail -1 | sed -E 's/-- iOS ([0-9.]+) --/\1/')
 APP_VERSION=$(/usr/libexec/PlistBuddy -c 'Print CFBundleShortVersionString' "$APP_PATH/Info.plist" 2>/dev/null || echo "?")
 
-# ── Uygulama kurulu mu?
-xcrun simctl get_app_container "$UDID" "$BUNDLE_ID" >/dev/null 2>&1 || xcrun simctl install "$UDID" "$APP_PATH"
+# ── Uygulama kurulu mu / binary güncel mi? (Lorin'in düzeltmesi: eski binary'nin
+# sessizce test edilmesini önlemek için kurulu binary ile yeni build md5 karşılaştırılır)
+INSTALLED=$(xcrun simctl get_app_container "$UDID" "$BUNDLE_ID" 2>/dev/null || true)
+NEW_MD5=$(md5 -q "$APP_PATH/getmobilvendor" 2>/dev/null || echo yeni-yok)
+OLD_MD5=$([ -n "$INSTALLED" ] && md5 -q "$INSTALLED/getmobilvendor" 2>/dev/null || echo kurulu-yok)
+if [ "$NEW_MD5" != "$OLD_MD5" ]; then
+  echo "→ binary değişmiş/eksik: yeni build kuruluyor ($OLD_MD5 → $NEW_MD5)"
+  xcrun simctl install "$UDID" "$APP_PATH" || { echo "HATA: kurulum başarısız"; exit 1; }
+fi
 xcrun simctl privacy "$UDID" grant all "$BUNDLE_ID" 2>/dev/null
 
 RUN_ID=$(date "+%Y%m%d-%H%M%S")
