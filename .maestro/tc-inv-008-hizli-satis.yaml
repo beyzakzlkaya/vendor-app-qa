@@ -1,0 +1,30 @@
+# TC-INV-008 — Hızlı Satış fırsatları (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/inventory/TC-INV-008-fast-buy-opportunities.md
+# Yapı: çekmece → Fırsatlar (genişlet) → Hızlı Satış. İki sekme: kendi cihazların + envanter önerileri.
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+- tapOn:
+    point: 10%,11%
+- extendedWaitUntil:
+    visible: 'Fırsatlar, .*'
+    timeout: 10000
+- tapOn: 'Fırsatlar, .*'
+- extendedWaitUntil:
+    visible: 'Hızlı Satış, .*'
+    timeout: 8000
+- tapOn: 'Hızlı Satış, .*'
+
+# Sayfa doğrulaması (ER-1) — sekmeler sayaçlı gelir ("..., N Adet")
+- extendedWaitUntil:
+    visible: 'Hızlı Satış Cihazların.*'
+    timeout: 15000
+- assertVisible: 'Envanterinden Öneriler.*'
+- assertVisible: '.*[0-9]+ Adet.*'         # sayaç formatı (ER-2: boş durum kabul, sayaçla görünür)
+- takeScreenshot: 04-hizli-satis-cihazlarin
+
+# Sekme geçişi (ER-1 tab aktivasyonu) — salt-okunur
+- tapOn: 'Envanterinden Öneriler.*'
+- assertNotVisible: 'Bir hata oluştu'
+- takeScreenshot: 05-envanter-onerileri

@@ -15,9 +15,9 @@ Durumlar: ✅ otomatik · 🔜 sırada (salt-okunur) · ✋ veri değiştiren (o
 | TC-ORDER-011 | İade raporu | ✅ | tc-order-011-iade-raporu.yaml |
 | TC-FIN-001 | Cüzdan bakiye + işlemler | ✅ | tc-fin-001-kasam.yaml |
 | TC-INV-001 | Cihaz envanteri listesi | ✅ | tc-inv-001-cihazlarim.yaml |
-| TC-INV-004 | Bidbook listesi | 🔜 | ekran keşfi yapılacak |
-| TC-INV-006 | Flash ürün listesi | 🔜 | ekran keşfi yapılacak |
-| TC-INV-008 | Fast buy fırsatları | 🔜 | ekran keşfi yapılacak |
+| TC-INV-004 | Bidbook listesi | ✅ | tc-inv-004-bidbook.yaml |
+| TC-INV-006 | Flash ürün listesi | ✅ | tc-inv-006-flas-urunler.yaml |
+| TC-INV-008 | Fast buy fırsatları | ✅ | tc-inv-008-hizli-satis.yaml (uygulamadaki adı: Hızlı Satış) |
 | TC-INV-009 | Katalog araması | 🔜 | ekran keşfi yapılacak |
 | TC-REFURB-001 | Yeniletme siparişleri görünümü | 🔜 | "Yeniletip Gönder" akışı keşfedilecek |
 | TC-BB-024 | Alım listesi başlangıç durumu | 🔜 | Mağaza modu ekran keşfi |

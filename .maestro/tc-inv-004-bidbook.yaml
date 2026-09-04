@@ -1,0 +1,34 @@
+# TC-INV-004 — Bidbook listesi (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/inventory/TC-INV-004-bidbook-list.md
+# Yapı: çekmece (hamburger) → Bidbook. Değer kontrolleri: alım limiti ₺, web fiyatı, model satırı.
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+# Çekmeceyi aç (hamburger ana sayfada sol üstte — id iOS'ta açık değil, konumla)
+- tapOn:
+    point: 10%,11%
+- extendedWaitUntil:
+    visible: 'Bidbook, .*'
+    timeout: 10000
+- tapOn: 'Bidbook, .*'
+
+# Sayfa doğrulaması (ER-1) — sayfaya özgü öğeler
+- extendedWaitUntil:
+    visible: 'Günlük Alım Limitin'
+    timeout: 15000
+- assertVisible: 'Bidbook Teklif'          # sekme
+- assertVisible: 'Kalan'
+
+# Değer kontrolleri (ER-2/ER-3 mobil karşılığı)
+- assertVisible: '₺[0-9][0-9.,]*'          # günlük alım limiti TRY formatı
+- assertVisible: '(Apple|Samsung).*'       # en az bir model satırı
+- assertVisible: 'Web Fiyatı ₺[0-9.,]*'    # model web fiyatı
+- assertVisible: 'Grade Bazlı Verdiğin Fiyatlar'
+- assertNotVisible: 'Bir hata oluştu'
+- takeScreenshot: 04-bidbook-listesi
+
+# Detay görünümü (ER-4) — salt-okunur genişletme
+- tapOn: 'Detayları Gör.*'
+- assertNotVisible: 'Bir hata oluştu'
+- takeScreenshot: 05-bidbook-detay

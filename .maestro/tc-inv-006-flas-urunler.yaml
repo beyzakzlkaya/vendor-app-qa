@@ -1,0 +1,33 @@
+# TC-INV-006 — Flaş ürün kampanyaları listesi (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/inventory/TC-INV-006-flash-product-list.md
+# Yapı: çekmece → Fırsatlar (genişlet) → Flaş Ürünler.
+# Değer kontrolleri: kampanya tarih formatı, komisyon yüzdesi, stok sayacı.
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+- tapOn:
+    point: 10%,11%
+- extendedWaitUntil:
+    visible: 'Fırsatlar, .*'
+    timeout: 10000
+- tapOn: 'Fırsatlar, .*'
+- extendedWaitUntil:
+    visible: 'Flaş Ürünler, .*'
+    timeout: 8000
+- tapOn: 'Flaş Ürünler, .*'
+
+# Sayfa doğrulaması (ER-1) — sayfaya özgü öğeler
+- extendedWaitUntil:
+    visible: 'Kampanya Tarihi:'
+    timeout: 15000
+- assertVisible: 'Kalan Zaman:'
+
+# Değer kontrolleri (ER-2/ER-3/ER-4 mobil karşılığı)
+- assertVisible: '.*[0-9]{2}\.[0-9]{2}\.[0-9]{4}.*'   # kampanya tarih formatı
+- assertVisible: '(Apple|Samsung).*'                   # en az bir kampanya ürünü
+- assertVisible: 'Teklife Katıl'                       # katılım aksiyonu görünür
+- assertVisible: '%[0-9.]+ komisyon'                   # komisyon oranı formatı
+- assertVisible: 'Mevcut Stoğum: [0-9]+'               # stok sayacı formatı
+- assertNotVisible: 'Bir hata oluştu'
+- takeScreenshot: 04-flas-urunler
