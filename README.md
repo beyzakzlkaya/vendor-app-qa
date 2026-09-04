@@ -6,10 +6,14 @@ Getmobil vendor mobil uygulaması (iOS + Android) için AI destekli test otomasy
 
 ```
 vendor-app-qa/
-├── apps/          → Test edilecek build'ler (Android .apk, iOS .app)
-├── .maestro/      → UI test senaryoları (Maestro flow'ları, YAML)
-├── api-tests/     → API test koleksiyonları (Postman export'ları)
-└── README.md      → Bu dosya
+├── .maestro/      → Çalıştırılabilir testler (tc-* = süit, mut-* = veri değiştiren/manuel,
+│                    subflows/giris.yaml = ortak giriş akışı)
+├── senaryolar/    → Senaryo dokümanları (kütüphane formatı .md — prompt-library PR kaynağı)
+├── ci/            → PR izleyici + kontrolcü + resmi workflow önerisi
+├── templates/     → Slack test sonuç şablonu ve doldurma kuralları
+├── reports/       → Koşum özetleri + ekran kanıtları (git dışı)
+├── qa-run.sh      → Süit koşucusu (cihaz seçimi, md5'li kurulum, retry, kanıt toplama)
+└── COVERAGE.md    → Kütüphane case'lerinin mobil kapsam durumu
 ```
 
 ## Nasıl çalışır?
@@ -36,11 +40,10 @@ vendor-app-qa/
 | Android emülatör (`vendor-test`, Pixel 7 / Android 15) | ✅ Kurulu, duman testi geçti |
 | Xcode 26.6 + iOS Simulator (iPhone 17) | ✅ Kurulu — login testi GEÇİYOR |
 
-## Dev ekibinden istenecekler
+## Notlar
 
-- [ ] Android universal `.apk` (her release'te — CI artifact olarak idealdir)
-- [ ] iOS simulator build `.app` (arm64, `xcodebuild -sdk iphonesimulator`)
-- [x] Test ortamı (preprod) kullanıcı hesabı → `.env` dosyasında (git'e gönderilmez)
+- iOS build'i dev ekibinden istenmez — `~/qa-vendor-build` klonundan derlenir (`AUTO_UPDATE=1 ./qa-run.sh`)
+- Android fazı başladığında `.apk` akışı buraya eklenecek (emülatör `vendor-test` hazır)
 
 ## CI — PR başına otomatik kontrol (21 Ağustos 2026)
 

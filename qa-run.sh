@@ -2,7 +2,7 @@
 # Getmobil Partner QA — test suite runner
 # Kullanım: ./qa-run.sh [flow1.yaml flow2.yaml ...]   (argümansız: tüm tc-*.yaml)
 # - Açık (booted) simülatörü otomatik seçer (QA_DEVICE_UDID ile ezilebilir)
-# - Uygulama kurulu değilse kurar, izinleri verir
+# - Yeni build'i (binary md5 değiştiyse) simülatöre kurar, izinleri verir
 # - Her flow'u süre ölçümüyle koşar, ekran görüntülerini reports/evidence/ altına toplar
 # - Özeti reports/last-run.txt dosyasına yazar (rapor ve Slack için)
 set -u
@@ -31,7 +31,7 @@ if [ -d "$BUILD_REPO/.git" ] && [ -z "${QA_SKIP_FRESHNESS:-}" ]; then
   fi
 fi
 
-# ── Cihaz seçimi: QA_DEVICE_UDID > ilk açık simülatör > iPhone 17'yi boot et
+# ── Cihaz seçimi: QA_DEVICE_UDID > ilk açık simülatör > mevcut ilk iPhone'u boot et
 UDID="${QA_DEVICE_UDID:-}"
 if [ -z "$UDID" ]; then
   UDID=$(xcrun simctl list devices booted | grep -oE '[A-F0-9-]{36}' | head -1)

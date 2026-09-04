@@ -1,14 +1,8 @@
 # Gizli bilgiler — asla paylaşılmaz
 .env
 
-# Build dosyaları — büyük, git'e konmaz
-apps/*.apk
-apps/*.app
-apps/*.zip
-
 # Maestro çıktıları
 .maestro/tests/
-maestro-report/
 reports/
 
 # App reposunun yerel klonu — ayrı repo, buraya konmaz
