@@ -1,0 +1,30 @@
+# TC-STORE-001 — Mağaza modu panosu görüntüleme (mobile özgü senaryo)
+# Kütüphanede birebir karşılığı yok — mobil uygulamaya özgü; kütüphaneye yeni case önerisi.
+# Yapı: ana sayfa üst anahtarı Online ⇄ Mağaza. Bu test Mağaza panosunun yüklendiğini doğrular.
+# Not: derin mağaza ekranları (Alım Listesi, Servis) mağaza AKTİVASYONU ister —
+# FPPRO hesabında tanıtım aşamasında; deep-dive testleri mağaza-yetkili hesap gerektirir.
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+# Mağaza moduna geç (üst anahtar — Online yanındaki mağaza ikonu)
+- tapOn:
+    point: 61%,11%
+
+# Pano doğrulaması — mağaza moduna özgü bölümler
+- extendedWaitUntil:
+    visible: '.*Bugünün Karı.*'
+    timeout: 15000
+- assertVisible: 'Hızlı işlemler'
+- assertVisible: '.*Mağazadan sat.*'
+- assertVisible: '.*Tezgahtan al.*'
+- assertVisible: '.*Defterim.*'
+- assertVisible: '.*Servis.*'
+
+# Değer kontrolleri: bekleyen sayaçları ve vitrin
+- assertVisible: '.*Tamirler, [0-9]+ Adet.*'
+- assertVisible: '.*Bekleyen Stok, [0-9]+ Adet.*'
+- assertVisible: '.*Vitrinde.*cihaz.*'
+- assertVisible: 'Satış Performansı'
+- assertNotVisible: 'Bir hata oluştu'
+- takeScreenshot: 04-magaza-panosu

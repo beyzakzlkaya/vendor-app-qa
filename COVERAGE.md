@@ -19,14 +19,15 @@ Durumlar: ✅ otomatik · 🔜 sırada (salt-okunur) · ✋ veri değiştiren (o
 | TC-INV-006 | Flash ürün listesi | ✅ | tc-inv-006-flas-urunler.yaml |
 | TC-INV-008 | Fast buy fırsatları | ✅ | tc-inv-008-hizli-satis.yaml (uygulamadaki adı: Hızlı Satış) |
 | TC-INV-009 | Katalog araması | 🔜 | ekran keşfi yapılacak |
-| TC-REFURB-001 | Yeniletme siparişleri görünümü | 🔜 | "Yeniletip Gönder" akışı keşfedilecek |
-| TC-BB-024 | Alım listesi başlangıç durumu | 🔜 | Mağaza modu ekran keşfi |
+| TC-REFURB-001 | Yeniletme siparişleri görünümü | ⛔ | mobil adayı: Mağaza modu 'Servis' ekranı — mağaza AKTİVASYONU gerekli (FPPRO'da tanıtım aşamasında; mağaza-yetkili hesapla açılacak) |
+| TC-BB-024 | Alım listesi başlangıç durumu | ⛔ | Mağaza modu derin ekranı — mağaza aktivasyonu/yetkili hesap gerekli |
 | TC-ORDER-008 | İade talebi oluşturma | 🔌 | müşteri+backoffice akışı — satıcı mobilinde karşılığı yok; web/API hattına |
 | TC-INV-002 | Fiyat güncelleme | 🐞 | mut-inv-002-fiyat-guncelleme.yaml — **BUG-2026-001 / NE-13129**: 0 ₺ doğrulamasız kabul ediliyor (ER-5 ihlali); hata düzelene dek süit dışı, "Fiyat Değiştirme Hakkı" kotası nedeniyle manuel koşulur |
 | TC-INV-003 | Toplu fiyat güncelleme | ✋ | veri değiştirir — onayla |
-| TC-INV-005 | Bidbook teklif verme | ✋ | veri oluşturur — onayla |
+| TC-INV-005 | Bidbook teklif verme | ✅ | mut-inv-005-bidbook-teklif.yaml — güvenli mutasyon: mevcut değerlerle yeniden gönderim (onaylı) |
 | TC-INV-007 | Flash ürüne katılım | ✋ | veri oluşturur — onayla |
 | TC-INV-011 | B2B katalog | ✅ | tc-inv-011-b2b-katalog.yaml (uygulamadaki adı: Tezgah) |
+| TC-STORE-001 | Mağaza panosu görüntüleme | ✅ | tc-store-001-magaza-panosu.yaml — mobile özgü YENİ case (kütüphaneye önerilecek) |
 | TC-ORDER-001 | Checkout (müşteri) | 🔌 | API hattı — müşteri hesabı gerekli |
 | TC-ORDER-010 | IMEI değişikliği | ✋ | backoffice adımı da var |
 | TC-BB-005/007/008/025–049 | Buyback akışları (17 case) | ❓/✋ | çoğu veri değiştiren mağaza akışı |

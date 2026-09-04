@@ -1,0 +1,64 @@
+# TC-INV-005 — Bidbook teklif gönderme (mobil uyarlama)
+# Kaynak: getmobil-e2e-test-prompt-library/domains/inventory/TC-INV-005-bidbook-make-offer.md
+#
+# ⚠️ VERİ DEĞİŞTİREN test (mut- öneki — varsayılan süit dışı, Beyza onayıyla koşulur).
+# Güvenli mutasyon stratejisi: editör MEVCUT teklif değerleriyle dolu gelir;
+# değerler DEĞİŞTİRİLMEDEN "Teklifi Gönder"e basılır → aynı teklif yeniden gönderilir,
+# veri fiilen değişmez ama gönderim akışı uçtan uca doğrulanır.
+# Manuel koşum: ./qa-run.sh .maestro/mut-inv-005-bidbook-teklif.yaml
+appId: com.getmobil.vendor
+---
+- runFlow: subflows/giris.yaml
+
+# Bidbook'a git (çekmece)
+- tapOn:
+    point: 10%,11%
+- extendedWaitUntil:
+    visible: 'Bidbook, .*'
+    timeout: 10000
+- tapOn: 'Bidbook, .*'
+- extendedWaitUntil:
+    visible: 'Günlük Alım Limitin'
+    timeout: 15000
+
+# Teklif editörünü aç (ER-1: teklif verilebilir model)
+- extendedWaitUntil:
+    visible: 'Teklifi Düzenle'
+    timeout: 10000
+- tapOn: 'Teklifi Düzenle'
+
+# Editör doğrulaması — sayfaya özgü öğeler + değer kontrolleri
+- extendedWaitUntil:
+    visible: 'Teklifi Gönder'
+    timeout: 15000
+- assertVisible: '(Apple|Samsung).*'         # model başlığı
+# Not: editörde etiket ve değer AYRI öğeler ('Web Fiyatı' + '₺90.000') — listedeki gibi birleşik değil
+- assertVisible: 'Web Fiyatı'
+- assertVisible: '₺[0-9.,]+'                 # referans fiyat değeri
+- assertVisible: '[A-Z] Grade'               # grade kartı (E/D/C/B)
+- assertVisible: 'Atanabilir Stok [0-9]+'    # stok sayacı formatı
+- assertVisible: 'Verilen Fiyat'
+- assertVisible: 'İstenilen Stok'
+- assertVisible: '[0-9]+ Kazanan'            # kazanan sayacı formatı
+- takeScreenshot: 04-teklif-editoru
+
+# Teklifi (değiştirmeden) gönder — ER-2/ER-3: kayıt + UI yansıması
+- tapOn: 'Teklifi Gönder'
+# Onay diyaloğu çıkarsa kabul et (metin varyantları)
+- extendedWaitUntil:
+    visible: '(Onayla|Evet|Gönder|Tamam)'
+    timeout: 5000
+    optional: true
+- runFlow:
+    when:
+      visible: '(Onayla|Evet|Gönder|Tamam)'
+    commands:
+      - tapOn: '(Onayla|Evet|Gönder|Tamam)'
+
+# Sonuç: hata yok, Bidbook listesine dönüldü / teklif durumu korunuyor
+- extendedWaitUntil:
+    visible: 'Günlük Alım Limitin'
+    timeout: 20000
+- assertNotVisible: 'Bir hata oluştu'
+- assertVisible: 'Teklifi Düzenle'           # teklif hâlâ mevcut (ER-3)
+- takeScreenshot: 05-teklif-gonderildi
